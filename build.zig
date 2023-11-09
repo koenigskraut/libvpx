@@ -17,6 +17,9 @@ pub fn build(b: *std.Build) !void {
 
     libvpx.addIncludePath(.{ .path = "." });
     const asm_config, const config_h = writeConfig(b, target) catch @panic("OOM");
+    const vp9_rtcd_h = b.addWriteFile("vp9_rtcd.h", try buildHeader(b, cpu, vp9_rtcd_in));
+    const vp8_rtcd_h = b.addWriteFile("vp8_rtcd.h", try buildHeader(b, cpu, vp8_rtcd_in));
+    const vpx_dsp_rtcd_h = b.addWriteFile("vpx_dsp_rtcd.h", try buildHeader(b, cpu, vpx_dsp_rtcd_in));
     // x86
     {
         for (x86_srsc.assembly) |input_file| {
@@ -45,6 +48,10 @@ pub fn build(b: *std.Build) !void {
         if (have_x86_feat(cpu, .sse2)) libvpx.addCSourceFiles(.{ .files = x86_srsc.sse2, .flags = common_flags });
         if (have_x86_feat(cpu, .sse4_1)) libvpx.addCSourceFiles(.{ .files = x86_srsc.sse4, .flags = common_flags });
         if (have_x86_feat(cpu, .ssse3)) libvpx.addCSourceFiles(.{ .files = x86_srsc.ssse3, .flags = common_flags });
+
+        libvpx.addIncludePath(vp9_rtcd_h.getDirectory());
+        libvpx.addIncludePath(vp8_rtcd_h.getDirectory());
+        libvpx.addIncludePath(vpx_dsp_rtcd_h.getDirectory());
     }
     libvpx.defineCMacro("_FORTIFY_SOURCE", "0");
     libvpx.defineCMacro("_LARGEFILE_SOURCE", null);
@@ -551,4 +558,82 @@ fn have_loong_feat(cpu: std.Target.Cpu, feat: std.Target.loongarch.Feature) bool
         .loongarch32, .loongarch64 => std.Target.loongarch.featureSetHas(cpu.features, feat),
         else => false,
     };
+}
+
+const string_features = std.ComptimeStringMap(std.Target.x86.Feature, .{
+    .{ "MMX", .mmx },
+    .{ "AVX", .avx },
+    .{ "AVX2", .avx2 },
+    .{ "AVX512", .avx512f },
+    .{ "SSE2", .sse2 },
+    .{ "SSE3", .sse3 },
+    .{ "SSE 4.1", .sse4_1 },
+    .{ "SSSE3", .ssse3 },
+});
+
+const vp9_rtcd_in = @embedFile("vp9_rtcd.h.in");
+const vp8_rtcd_in = @embedFile("vp8_rtcd.h.in");
+const vpx_dsp_rtcd_in = @embedFile("vpx_dsp_rtcd.h.in");
+
+pub fn renderSimple(block: []const u8, cpu: std.Target.Cpu, to: *std.ArrayList(u8)) !void {
+    var it = std.mem.splitSequence(u8, block, "\n");
+    while (it.next()) |line| {
+        if (!std.mem.startsWith(u8, line, "// [[")) {
+            try to.appendSlice(line);
+            try to.append('\n');
+            continue;
+        }
+        const end = std.mem.indexOf(u8, line, "]] ").?;
+        const feature = line[0..end]["// [[".len..];
+        const clear_line = line[end..]["]] ".len..];
+        if (have_x86_feat(cpu, string_features.get(feature).?)) {
+            try to.appendSlice(clear_line);
+            try to.append('\n');
+        }
+    }
+    try to.append('\n');
+}
+
+pub fn renderDefineConditional(block: []const u8, cpu: std.Target.Cpu, to: *std.ArrayList(u8)) !void {
+    var it = std.mem.splitSequence(u8, block, "\n");
+    var define_name: []const u8 = blk: {
+        const line = it.first();
+        const start = std.mem.indexOf(u8, line, "]] ").?;
+        break :blk line[start + "]] ".len ..];
+    };
+    var stack = try std.BoundedArray([]const u8, 10).init(0);
+    while (it.next()) |line| {
+        const end = std.mem.indexOf(u8, line, "]] ").?;
+        const feature = line[0..end]["// [[".len..];
+        const clear_line = line[end..]["]] ".len..];
+
+        const end_fn = std.mem.indexOfScalar(u8, clear_line, '(').?;
+        const start_fn = std.mem.lastIndexOfScalar(u8, clear_line[0..end_fn], ' ').? + 1;
+        const fn_name = clear_line[start_fn..end_fn];
+
+        const have_feature = blk: {
+            const feat = string_features.get(feature) orelse break :blk true;
+            break :blk have_x86_feat(cpu, feat);
+        };
+        if (have_feature) {
+            try to.appendSlice(clear_line);
+            try to.append('\n');
+            try stack.append(fn_name);
+        }
+    }
+    try to.writer().print("#define {s} {s}\n", .{ define_name, stack.pop() });
+    try to.append('\n');
+}
+
+pub fn buildHeader(b: *std.Build, cpu: std.Target.Cpu, input: []const u8) ![]u8 {
+    var list = std.ArrayList(u8).init(b.allocator);
+    defer list.deinit();
+    var it = std.mem.splitSequence(u8, input, "\n\n");
+    while (it.next()) |block| {
+        if (std.mem.startsWith(u8, block, "// [[DEFINE]]"))
+            try renderDefineConditional(block, cpu, &list)
+        else
+            try renderSimple(block, cpu, &list);
+    }
+    return try list.toOwnedSlice();
 }
