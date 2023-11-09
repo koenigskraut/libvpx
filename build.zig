@@ -5,7 +5,7 @@ pub fn build(b: *std.Build) !void {
     const optimize = b.standardOptimizeOption(.{});
     const cpu = target.getCpu();
 
-    const yasm_dep = b.dependency("yasm", .{ .target = target, .optimize = optimize });
+    const yasm_dep = b.dependency("yasm", .{ .optimize = .ReleaseFast });
     const yasm_exe = yasm_dep.artifact("yasm");
 
     const libvpx = b.addStaticLibrary(.{
