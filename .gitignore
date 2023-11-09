@@ -59,8 +59,6 @@
 /vp8_api1_migration.dox
 /vp[89x]_rtcd.h
 /vpx.pc
-/vpx_config.c
-/vpx_config.h
 /vpx_dsp_rtcd.h
 /vpxdec
 /vpxdec.dox

@@ -253,7 +253,7 @@ const x86_srsc = struct {
         "vp9/decoder/vp9_decoder.c",
         "vp9/decoder/vp9_dsubexp.c",
         "vp9/decoder/vp9_job_queue.c",
-        // "vpx_config.c",
+        "vpx_config.c",
     };
 
     const mmx: StrSlice = &.{

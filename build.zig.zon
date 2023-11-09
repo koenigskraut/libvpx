@@ -60,6 +60,8 @@
         "vp8",
         "vp9",
         "vpx",
+        "vpx_config.c",
+        "vpx_config.h",
         "vpx_dsp",
         "vpx_mem",
         "vpx_ports",
