@@ -258,6 +258,7 @@ const x86_srsc = struct {
     };
 
     const ssse3: StrSlice = &.{
+        "vpx_dsp/x86/highbd_intrapred_intrin_ssse3.c", //highbd
         "vpx_dsp/x86/vpx_subpixel_8t_intrin_ssse3.c",
         "vpx_dsp/x86/inv_txfm_ssse3.c",
         "vpx_dsp/x86/quantize_ssse3.c",
@@ -267,16 +268,24 @@ const x86_srsc = struct {
     };
 
     const sse2: StrSlice = &.{
+        "vpx_dsp/x86/highbd_intrapred_intrin_sse2.c", //highbd
         "vpx_dsp/x86/avg_intrin_sse2.c",
         "vpx_dsp/x86/avg_pred_sse2.c",
         "vpx_dsp/x86/fwd_txfm_sse2.c",
+        "vpx_dsp/x86/highbd_loopfilter_sse2.c", //highbd
         "vpx_dsp/x86/post_proc_sse2.c",
         "vpx_dsp/x86/vpx_subpixel_4t_intrin_sse2.c",
         "vpx_dsp/x86/loopfilter_sse2.c",
         "vpx_dsp/x86/inv_txfm_sse2.c",
+        "vpx_dsp/x86/highbd_idct4x4_add_sse2.c", //highbd
+        "vpx_dsp/x86/highbd_idct8x8_add_sse2.c", //highbd
+        "vpx_dsp/x86/highbd_idct16x16_add_sse2.c", //highbd
+        "vpx_dsp/x86/highbd_idct32x32_add_sse2.c", //highbd
         "vpx_dsp/x86/quantize_sse2.c",
+        "vpx_dsp/x86/highbd_quantize_intrin_sse2.c", //highbd
         "vpx_dsp/x86/sum_squares_sse2.c",
         "vpx_dsp/x86/variance_sse2.c",
+        "vpx_dsp/x86/highbd_variance_sse2.c", //highbd
         "vp8/common/x86/idct_blk_sse2.c",
         "vp8/common/x86/bilinear_filter_sse2.c",
         "vp8/encoder/x86/vp8_quantize_sse2.c",
@@ -284,24 +293,37 @@ const x86_srsc = struct {
         "vp8/encoder/x86/vp8_enc_stubs_sse2.c",
         "vp9/common/x86/vp9_idct_intrin_sse2.c",
         "vp9/encoder/x86/vp9_quantize_sse2.c",
+        "vp9/encoder/x86/vp9_highbd_block_error_intrin_sse2.c", //highbd
         "vp9/encoder/x86/vp9_dct_intrin_sse2.c",
     };
 
     const sse4: StrSlice = &.{
+        "vpx_dsp/x86/highbd_idct4x4_add_sse4.c", //highbd
+        "vpx_dsp/x86/highbd_idct8x8_add_sse4.c", //highbd
+        "vpx_dsp/x86/highbd_idct16x16_add_sse4.c", //highbd
+        "vpx_dsp/x86/highbd_idct32x32_add_sse4.c", //highbd
         "vp8/encoder/x86/quantize_sse4.c",
+        "vp9/common/x86/vp9_highbd_iht4x4_add_sse4.c", //highbd
+        "vp9/common/x86/vp9_highbd_iht8x8_add_sse4.c", //highbd
+        "vp9/common/x86/vp9_highbd_iht16x16_add_sse4.c", //highbd
         "vp9/encoder/x86/temporal_filter_sse4.c",
+        "vp9/encoder/x86/highbd_temporal_filter_sse4.c", //highbd
     };
 
     const avx2: StrSlice = &.{
         "vpx_dsp/x86/avg_intrin_avx2.c",
         "vpx_dsp/x86/avg_pred_avx2.c",
         "vpx_dsp/x86/fwd_txfm_avx2.c",
+        "vpx_dsp/x86/highbd_convolve_avx2.c", //highbd
         "vpx_dsp/x86/vpx_subpixel_8t_intrin_avx2.c",
         "vpx_dsp/x86/loopfilter_avx2.c",
         "vpx_dsp/x86/inv_txfm_avx2.c",
         "vpx_dsp/x86/quantize_avx2.c",
+        "vpx_dsp/x86/highbd_quantize_intrin_avx2.c", //highbd
         "vpx_dsp/x86/sad4d_avx2.c",
         "vpx_dsp/x86/sad_avx2.c",
+        "vpx_dsp/x86/highbd_sad4d_avx2.c", //highbd
+        "vpx_dsp/x86/highbd_sad_avx2.c", //highbd
         "vpx_dsp/x86/subtract_avx2.c",
         "vpx_dsp/x86/variance_avx2.c",
         "vp9/encoder/x86/vp9_quantize_avx2.c",
@@ -316,12 +338,15 @@ const x86_srsc = struct {
         "vpx_ports/emms_mmx.asm",
         "vpx_dsp/x86/intrapred_sse2.asm",
         "vpx_dsp/x86/intrapred_ssse3.asm",
+        "vpx_dsp/x86/highbd_intrapred_sse2.asm", //highbd
         "vpx_dsp/x86/add_noise_sse2.asm",
         "vpx_dsp/x86/deblock_sse2.asm",
         "vpx_dsp/x86/vpx_subpixel_8t_sse2.asm",
         "vpx_dsp/x86/vpx_subpixel_bilinear_sse2.asm",
         "vpx_dsp/x86/vpx_subpixel_8t_ssse3.asm",
         "vpx_dsp/x86/vpx_subpixel_bilinear_ssse3.asm",
+        "vpx_dsp/x86/vpx_high_subpixel_8t_sse2.asm", //highbd
+        "vpx_dsp/x86/vpx_high_subpixel_bilinear_sse2.asm", //highbd
         "vpx_dsp/x86/vpx_convolve_copy_sse2.asm",
         "vpx_dsp/x86/fwd_txfm_ssse3_x86_64.asm",
         "vpx_dsp/x86/inv_wht_sse2.asm",
@@ -329,8 +354,12 @@ const x86_srsc = struct {
         "vpx_dsp/x86/sad4d_sse2.asm",
         "vpx_dsp/x86/sad_sse2.asm",
         "vpx_dsp/x86/subtract_sse2.asm",
+        "vpx_dsp/x86/highbd_sad4d_sse2.asm", //highbd
+        "vpx_dsp/x86/highbd_sad_sse2.asm", //highbd
         "vpx_dsp/x86/ssim_opt_x86_64.asm",
         "vpx_dsp/x86/subpel_variance_sse2.asm",
+        "vpx_dsp/x86/highbd_variance_impl_sse2.asm", //highbd
+        "vpx_dsp/x86/highbd_subpel_variance_impl_sse2.asm", //highbd
         "vp8/common/x86/dequantize_mmx.asm",
         "vp8/common/x86/idctllm_mmx.asm",
         "vp8/common/x86/recon_mmx.asm",
@@ -404,7 +433,7 @@ fn writeConfig(b: *std.Build, target: std.zig.CrossTarget) !struct { *std.Build.
         .CONFIG_RVCT = false,
         .CONFIG_GCC = true,
         .CONFIG_MSVS = false,
-        .CONFIG_PIC = false,
+        .CONFIG_PIC = true,
         .CONFIG_BIG_ENDIAN = false,
         .CONFIG_CODEC_SRCS = false,
         .CONFIG_DEBUG_LIBS = false,
@@ -442,7 +471,7 @@ fn writeConfig(b: *std.Build, target: std.zig.CrossTarget) !struct { *std.Build.
         .CONFIG_TEMPORAL_DENOISING = true,
         .CONFIG_VP9_TEMPORAL_DENOISING = false,
         .CONFIG_COEFFICIENT_RANGE_CHECKING = false,
-        .CONFIG_VP9_HIGHBITDEPTH = false,
+        .CONFIG_VP9_HIGHBITDEPTH = true,
         .CONFIG_BETTER_HW_COMPATIBILITY = false,
         .CONFIG_EXPERIMENTAL = false,
         .CONFIG_SIZE_LIMIT = false,
