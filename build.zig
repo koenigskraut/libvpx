@@ -571,9 +571,9 @@ const string_features = std.ComptimeStringMap(std.Target.x86.Feature, .{
     .{ "SSSE3", .ssse3 },
 });
 
-const vp9_rtcd_in = @embedFile("vp9_rtcd.h.in");
-const vp8_rtcd_in = @embedFile("vp8_rtcd.h.in");
-const vpx_dsp_rtcd_in = @embedFile("vpx_dsp_rtcd.h.in");
+const vp9_rtcd_in = @embedFile("vp9_rtcd.zt");
+const vp8_rtcd_in = @embedFile("vp8_rtcd.zt");
+const vpx_dsp_rtcd_in = @embedFile("vpx_dsp_rtcd.zt");
 
 pub fn renderSimple(block: []const u8, cpu: std.Target.Cpu, to: *std.ArrayList(u8)) !void {
     var it = std.mem.splitSequence(u8, block, "\n");
